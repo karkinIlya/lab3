@@ -77,7 +77,7 @@ public class ReportApp {
                         }
                 );
 
-        System.out.println(
+        System.out.println(airportData
                 .collect());
     }
 }
