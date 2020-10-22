@@ -73,7 +73,27 @@ public class ReportApp {
                         }
                 );
 
-        System.out.println(airportData
+        System.out.println(sc
+                .textFile(AIRPORTDATAFILE)
+                .filter(
+                        s -> s.charAt(0) != '\"'
+                )
+                .mapToPair(
+                        s -> {
+                            final String[] data = s.split(SEPARATORINTOCELLS);
+                            final Tuple2<Integer, Integer> key =
+                                    new Tuple2<>(Integer.parseInt(data[ORGINAIRPORTIDCOLUMN]),
+                                            Integer.parseInt(data[DESTINATIONAIRPORTIDCOLUMN]));
+                            final String[] value = {data[NEWDELAYCOLUMN], data[CANSELLEDCOLUMN]};
+                            return new Tuple2<>(key, value);
+                        }
+                )
+                .groupByKey()
+                .map(
+                        s -> {
+                            return s._1._1.toString() + " " + s._1._2.toString();
+                        }
+                )
                 .collect());
     }
 }
