@@ -95,7 +95,9 @@ public class ReportApp {
                             int delayCount = 0, cancelledCount = 0, count = 0;
                             for (String[] str : s._2) {
                                 count++;
-                                val += " [" + str[0] + " " +str[1] + "]";
+                                if(str[CANSELLEDCOLUMNINGROUPBYKEY].equals("1.00")) {
+                                    
+                                }
                             }
                             return s._1._1.toString() + " " + s._1._2.toString() + val;
                         }
