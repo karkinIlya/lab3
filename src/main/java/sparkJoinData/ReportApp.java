@@ -3,5 +3,7 @@ package sparkJoinData;
 import org.apache.spark.SparkConf;
 
 public class ReportApp {
-    SparkConf conf = new SparkConf().setAppName("");
+    public static final String APP_NAME = "Report airports";
+    SparkConf conf = new SparkConf().setAppName(APP_NAME);
+
 }
