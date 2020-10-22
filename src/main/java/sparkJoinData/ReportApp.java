@@ -1,2 +1,4 @@
-package sparkJoinData;public class ReportApp {
+package sparkJoinData;
+
+public class ReportApp {
 }
