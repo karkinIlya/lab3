@@ -77,41 +77,7 @@ public class ReportApp {
                         }
                 );
 
-        System.out.println(sc
-                .textFile(AIRPORTDATAFILE)
-                .filter(
-                        s -> s.charAt(0) != '\"'
-                )
-                .mapToPair(
-                        s -> {
-                            final String[] data = s.split(SEPARATORINTOCELLS);
-                            final Tuple2<Integer, Integer> key =
-                                    new Tuple2<>(Integer.parseInt(data[ORGINAIRPORTIDCOLUMN]),
-                                            Integer.parseInt(data[DESTINATIONAIRPORTIDCOLUMN]));
-                            final String[] value = {data[NEWDELAYCOLUMN], data[CANSELLEDCOLUMN]};
-                            return new Tuple2<>(key, value);
-                        }
-                )
-                .groupByKey()
-                .map(
-                        s -> {
-                            double maxDelay = 0;
-                            int delayCount = 0, cancelledCount = 0, count = 0;
-                            for (String[] str : s._2) {
-                                count++;
-                                if(!str[CANSELLEDCOLUMNINGROUPBYKEY].equals("0.00")) {
-                                    cancelledCount++;
-                                }
-                                else if (!str[DELAYCOLUMNINGROUPBYKEY].equals("0.00")
-                                        && !str[DELAYCOLUMNINGROUPBYKEY].isEmpty()) {
-                                    delayCount++;
-                                    double curDelay = Double.parseDouble(str[DELAYCOLUMNINGROUPBYKEY]);
-                                    maxDelay = maxDelay >= curDelay ? maxDelay : curDelay;
-                                }
-                            }
-                            return s._1._1.toString() + " " + s._1._2.toString() + count + " " + maxDelay;
-                        }
-                )
+        System.out.println(
                 .collect());
     }
 }
