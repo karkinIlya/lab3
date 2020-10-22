@@ -33,7 +33,8 @@ public class ReportApp {
                                     new String[] {data[AIRPORTDESCRIPTIONCOLUMN].replace(QUOTION, EMPTY)});
                         });
 
-        JavaPairRDD<Integer, String[]> 
+        JavaPairRDD<Integer, String[]> airportData = sc
+                .textFile("")
 
     }
 }
