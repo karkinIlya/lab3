@@ -45,7 +45,7 @@ public class ReportApp {
         JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = sc
                 .textFile(AIRPORTDATAFILE)
                 .filter(
-                        s -> 
+                        s -> s.charAt(0) != '\"'
                 )
                 .mapToPair(
                         s -> {
