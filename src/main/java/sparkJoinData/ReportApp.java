@@ -96,7 +96,12 @@ public class ReportApp {
                             for (String[] str : s._2) {
                                 count++;
                                 if(str[CANSELLEDCOLUMNINGROUPBYKEY].equals("1.00")) {
-                                    
+                                    cancelledCount++;
+                                }
+                                else if (!str[DELAYCOLUMNINGROUPBYKEY].equals("0.00")) {
+                                    delayCount++;
+                                    double curDelay = Double.parseDouble(str[DELAYCOLUMNINGROUPBYKEY]);
+                                    maxDelay = maxDelay >= curDelay ? maxDelay : curDelay;
                                 }
                             }
                             return s._1._1.toString() + " " + s._1._2.toString() + val;
