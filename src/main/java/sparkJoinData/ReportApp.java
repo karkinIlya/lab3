@@ -91,8 +91,10 @@ public class ReportApp {
                 .groupByKey()
                 .map(
                         s -> {
-                            String val = "";
+                            double maxDelay = 0;
+                            int delayCount = 0, cancelledCount = 0, count = 0;
                             for (String[] str : s._2) {
+                                count++;
                                 val += " [" + str[0] + " " +str[1] + "]";
                             }
                             return s._1._1.toString() + " " + s._1._2.toString() + val;
