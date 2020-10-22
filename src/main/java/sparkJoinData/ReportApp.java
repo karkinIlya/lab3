@@ -22,7 +22,7 @@ public class ReportApp {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        JavaPairRDD<Integer, String> airportInfo = sc
+        JavaPairRDD<Integer, String[]> airportInfo = sc
                 .textFile(AIRPORTIDFILE)
                 .flatMap(
                         s -> Arrays.stream(s.split(SEPARATORINTOLINES)).iterator())
@@ -30,8 +30,10 @@ public class ReportApp {
                         s -> {
                             String[] data = s.split(SEPARATORINTOCELLS);
                             return new Tuple2<>(Integer.parseInt(data[AIRPORTCODECOLUMN].replace(QUOTION, EMPTY)),
-                                    data[AIRPORTDESCRIPTIONCOLUMN].replace(QUOTION, EMPTY));
+                                    new String[] {data[AIRPORTDESCRIPTIONCOLUMN].replace(QUOTION, EMPTY)});
                         });
+
+        JavaPairRDD<Integer, String[]> 
 
     }
 }
