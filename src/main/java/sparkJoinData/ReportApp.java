@@ -1,6 +1,7 @@
 package sparkJoinData;
 
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -18,6 +19,7 @@ public class ReportApp {
         JavaRDD<String> airportIdLines = airportIdFile.flatMap(
                 s -> Arrays.stream(s.split("\n")).iterator()
         );
-        
+        JavaPairRDD<Integer, String> 
+
     }
 }
