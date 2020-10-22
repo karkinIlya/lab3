@@ -2,11 +2,10 @@ package sparkJoinData;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
 
-import java.util.Arrays;
+import java.util.Map;
 
 public class ReportApp {
     public static final String APPNAME = "Report airports";
@@ -30,18 +29,7 @@ public class ReportApp {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        JavaPairRDD<Integer, String[]> airportInfo = sc
-                .textFile(AIRPORTIDFILE)
-                .filter(
-                        s -> !s.equals(AIRPORTIDTITLE)
-                )
-                .mapToPair(
-                        s -> {
-                            final String[] data = s.split(SEPARATORINTOCELLS);
-                            return new Tuple2<>(Integer.parseInt(data[AIRPORTCODECOLUMN].replace(QUOTION, EMPTY)),
-                                    new String[] {data[AIRPORTDESCRIPTIONCOLUMN].replace(QUOTION, EMPTY)});
-                        }
-                );
+        JavaPairRDD<Integer, String> airportInfo = getAirportId(sc);
 
         JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = sc
                 .textFile(AIRPORTDATAFILE)
@@ -80,8 +68,25 @@ public class ReportApp {
                             return new Tuple2<>(s._1, value);
                         }
                 );
+        Map<Integer, String> airports = airportInfo.collectAsMap();
 
         System.out.println(airportData
                 .collect());
+    }
+
+    private static JavaPairRDD<Integer, String> getAirportId(JavaSparkContext sc) {
+        JavaPairRDD<Integer, String> airportInfo = sc
+                .textFile(AIRPORTIDFILE)
+                .filter(
+                        s -> !s.equals(AIRPORTIDTITLE)
+                )
+                .mapToPair(
+                        s -> {
+                            final String[] data = s.split(SEPARATORINTOCELLS);
+                            return new Tuple2<>(Integer.parseInt(data[AIRPORTCODECOLUMN].replace(QUOTION, EMPTY)),
+                                    data[AIRPORTDESCRIPTIONCOLUMN].replace(QUOTION, EMPTY));
+                        }
+                );
+        return airportInfo;
     }
 }
