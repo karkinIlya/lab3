@@ -15,8 +15,9 @@ public class ReportApp {
         JavaSparkContext sc = new JavaSparkContext(conf);
 
         JavaRDD<String> airportIdFile = sc.textFile(AIRPORTIDFILE);
-        JavaRDD<String> splittedAirportId = airportIdFile.flatMap(
-                s -> Arrays.stream(s.split(""))
-        )
+        JavaRDD<String> airportIdLines = airportIdFile.flatMap(
+                s -> Arrays.stream(s.split("\n")).iterator()
+        );
+        
     }
 }
