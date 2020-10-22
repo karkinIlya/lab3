@@ -46,8 +46,8 @@ public class ReportApp {
 
     private static String logFormation(Broadcast<Map<Integer, String>> airportsBroadcasted, Tuple2<Tuple2<Integer, Integer>, Double[]> s) {
         return "Max delay: " + String.format("%.3f", s._2[MAXDELAYCOLUMN]) + "\t" +
-                "Part of delays: " + String.format("%.3f%", s._2[PARTOFDELAYSCOLUMN] * 100) + "\t" +
-                "Part of canselled: " + String.format("%.3f%", s._2[PARTOFCANSELLEDCOLUMN] * 100) + "\t" +
+                "Part of delays: " + String.format("%.3f", s._2[PARTOFDELAYSCOLUMN] * 100) + "%\t" +
+                "Part of canselled: " + String.format("%.3f", s._2[PARTOFCANSELLEDCOLUMN] * 100) + "%\t" +
                 "Origin airport: " + s._1._1 + "\t" + airportsBroadcasted.value().get(s._1._1) + "\t" +
                 "Destination airport: " + s._1._2 + "\t" + airportsBroadcasted.value().get(s._1._2);
     }
