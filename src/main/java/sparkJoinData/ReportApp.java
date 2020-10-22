@@ -22,6 +22,8 @@ public class ReportApp {
     public static final int DESTINATIONAIRPORTIDCOLUMN = 14;
     public static final int NEWDELAYCOLUMN = 18;
     public static final int CANSELLEDCOLUMN = 19;
+    public static final int CANSELLEDCOLUMNINGROUPBYKEY = 1;
+    public static final int DELAYCOLUMNINGROUPBYKEY = 0;
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
@@ -34,7 +36,7 @@ public class ReportApp {
                 )
                 .mapToPair(
                         s -> {
-                            String[] data = s.split(SEPARATORINTOCELLS);
+                            final String[] data = s.split(SEPARATORINTOCELLS);
                             return new Tuple2<>(Integer.parseInt(data[AIRPORTCODECOLUMN].replace(QUOTION, EMPTY)),
                                     new String[] {data[AIRPORTDESCRIPTIONCOLUMN].replace(QUOTION, EMPTY)});
                         }
@@ -47,19 +49,34 @@ public class ReportApp {
                 )
                 .mapToPair(
                         s -> {
-                            String[] data = s.split(SEPARATORINTOCELLS);
-                            Tuple2<Integer, Integer> key = new Tuple2<>(Integer.parseInt(data[ORGINAIRPORTIDCOLUMN]),
-                                    Integer.parseInt(data[DESTINATIONAIRPORTIDCOLUMN]));
-                            Double[] value = {Double.parseDouble(data[NEWDELAYCOLUMN]),
-                                    Double.parseDouble(data[CANSELLEDCOLUMN])};
+                            final String[] data = s.split(SEPARATORINTOCELLS);
+                            final Tuple2<Integer, Integer> key =
+                                    new Tuple2<>(Integer.parseInt(data[ORGINAIRPORTIDCOLUMN]),
+                                            Integer.parseInt(data[DESTINATIONAIRPORTIDCOLUMN]));
+                            final String[] value = {data[NEWDELAYCOLUMN], data[CANSELLEDCOLUMN]};
                             return new Tuple2<>(key, value);
                         }
                 )
                 .groupByKey()
-                .map(
+                .mapToPair(
                         s -> {
-                            double maxDelay = 0, delaySum = 0;
+                            double maxDelay = 0;
+                            int delayCount = 0, cancelledCount = 0, count = 0;
+                            for (String[] str : s._2) {
+                                count++;
+                                if(str[CANSELLEDCOLUMNINGROUPBYKEY].equals("0.00")) {
+                                    maxDelay = Math.max(Double.parseDouble(str[DELAYCOLUMNINGROUPBYKEY]), maxDelay);
+                                    delayCount++;
+                                } else {
+                                    cancelledCount++;
+                                }
+                            }
+                            final Double[] value = {maxDelay, (double)delayCount / count,
+                                    (double)cancelledCount / count};
+                            return new Tuple2<>(s._1, value);
                         }
-                )
+                );
+
+        System.out.println(airportData.collect());
     }
 }
