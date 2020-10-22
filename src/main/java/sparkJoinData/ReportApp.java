@@ -41,7 +41,7 @@ public class ReportApp {
         JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = sc
                 .textFile(AIRPORTDATAFILE)
                 .filter(
-                        s -> s.charAt(0) != '\"'
+                        s -> s.equals()
                 )
                 .mapToPair(
                         s -> {
@@ -60,11 +60,14 @@ public class ReportApp {
                             int delayCount = 0, cancelledCount = 0, count = 0;
                             for (String[] str : s._2) {
                                 count++;
-                                if(str[CANSELLEDCOLUMNINGROUPBYKEY].equals("0.00")) {
-                                    maxDelay = Math.max(Double.parseDouble(str[DELAYCOLUMNINGROUPBYKEY]), maxDelay);
-                                    delayCount++;
-                                } else {
+                                if(!str[CANSELLEDCOLUMNINGROUPBYKEY].equals("0.00")) {
                                     cancelledCount++;
+                                }
+                                else if (!str[DELAYCOLUMNINGROUPBYKEY].equals("0.00")
+                                        && !str[DELAYCOLUMNINGROUPBYKEY].isEmpty()) {
+                                    delayCount++;
+                                    double curDelay = Double.parseDouble(str[DELAYCOLUMNINGROUPBYKEY]);
+                                    maxDelay = maxDelay >= curDelay ? maxDelay : curDelay;
                                 }
                             }
                             final Double[] value = {maxDelay, (double)delayCount / count,
