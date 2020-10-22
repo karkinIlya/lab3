@@ -44,6 +44,9 @@ public class ReportApp {
 
         JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = sc
                 .textFile(AIRPORTDATAFILE)
+                .filter(
+                        s -> 
+                )
                 .mapToPair(
                         s -> {
                             final String[] data = s.split(SEPARATORINTOCELLS);
@@ -53,9 +56,6 @@ public class ReportApp {
                             final String[] value = {data[NEWDELAYCOLUMN], data[CANSELLEDCOLUMN]};
                             return new Tuple2<>(key, value);
                         }
-                )
-                .filter(
-                        s -> !s._1.equals("YEAR")
                 )
                 .groupByKey()
                 .mapToPair(
