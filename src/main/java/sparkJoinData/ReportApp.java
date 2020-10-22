@@ -12,6 +12,7 @@ public class ReportApp {
     public static final String APPNAME = "Report airports";
     public static final String AIRPORTIDFILE = "L_AIRPORT_ID.csv";
     public static final String SEPARATORINTOLINES = "\n";
+    public static final String SEPARATORINTOCELLS = "\",\"";
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
@@ -23,7 +24,7 @@ public class ReportApp {
         );
         JavaPairRDD<Integer, String> airportCodeDescription = airportIdLines.mapToPair(
                 s -> {
-                    String[] data = s.split()
+                    String[] data = s.split(SEPARATORINTOCELLS);
                     return new Tuple2<>();
                 }
         );
