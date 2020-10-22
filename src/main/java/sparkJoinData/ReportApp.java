@@ -81,6 +81,17 @@ public class ReportApp {
                 .textFile(AIRPORTDATAFILE)
                 .filter(
                         s -> s.charAt(0) != '\"'
-                ).collect());
+                )
+                .mapToPair(
+                        s -> {
+                            final String[] data = s.split(SEPARATORINTOCELLS);
+                            final Tuple2<Integer, Integer> key =
+                                    new Tuple2<>(Integer.parseInt(data[ORGINAIRPORTIDCOLUMN]),
+                                            Integer.parseInt(data[DESTINATIONAIRPORTIDCOLUMN]));
+                            final String[] value = {data[NEWDELAYCOLUMN], data[CANSELLEDCOLUMN]};
+                            return new Tuple2<>(key, value);
+                        }
+                )
+                .collect());
     }
 }
