@@ -7,7 +7,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
 
 import java.util.Arrays;
-import java.util.Vector;
 
 public class ReportApp {
     public static final String APPNAME = "Report airports";
@@ -25,6 +24,7 @@ public class ReportApp {
     public static final int CANSELLEDCOLUMN = 19;
     public static final int CANSELLEDCOLUMNINGROUPBYKEY = 1;
     public static final int DELAYCOLUMNINGROUPBYKEY = 0;
+    public static final String AIRPORTIDTITLE = "Code,Description";
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
@@ -33,12 +33,7 @@ public class ReportApp {
         JavaPairRDD<Integer, String[]> airportInfo = sc
                 .textFile(AIRPORTIDFILE)
                 .flatMap(
-                        s -> {
-
-                            String[] lines = s.split(SEPARATORINTOLINES);
-                            new Vector(lines)
-                            return Arrays.stream(lines).iterator();
-                        }
+                        s -> Arrays.stream(s.split(AIRPORTIDTITLE)[1].split(SEPARATORINTOLINES)).iterator()
                 )
                 .mapToPair(
                         s -> {
