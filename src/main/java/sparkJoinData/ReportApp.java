@@ -7,6 +7,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
 
 import java.util.Arrays;
+import java.util.Vector;
 
 public class ReportApp {
     public static final String APPNAME = "Report airports";
@@ -33,8 +34,9 @@ public class ReportApp {
                 .textFile(AIRPORTIDFILE)
                 .flatMap(
                         s -> {
+
                             String[] lines = s.split(SEPARATORINTOLINES);
-                            lines.
+                            new Vector(lines)
                             return Arrays.stream(lines).iterator();
                         }
                 )
