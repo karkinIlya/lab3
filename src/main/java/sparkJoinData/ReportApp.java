@@ -24,8 +24,6 @@ public class ReportApp {
     public static final int CANSELLEDCOLUMN = 19;
     public static final int CANSELLEDCOLUMNINGROUPBYKEY = 1;
     public static final int DELAYCOLUMNINGROUPBYKEY = 0;
-    public static final int AIRPORTIDTITLELEN = 17;
-    public static final int AIRPORTDATATITLELEN = 316;
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
@@ -48,7 +46,6 @@ public class ReportApp {
                 .textFile(AIRPORTDATAFILE)
                 .flatMap(
                         s -> {
-                            System.out.println("\n\n\n-------" + s + "---\n");
                             return Arrays.stream(s.split(SEPARATORINTOLINES)).iterator();
                         }
                 )
