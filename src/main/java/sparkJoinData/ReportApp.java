@@ -55,7 +55,7 @@ public class ReportApp {
                         }
                 )
                 .filter(
-                        s -> !s._1.equals()
+                        s -> !s._1.equals("YEAR")
                 )
                 .groupByKey()
                 .mapToPair(
