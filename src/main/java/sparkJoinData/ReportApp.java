@@ -91,7 +91,11 @@ public class ReportApp {
                 .groupByKey()
                 .map(
                         s -> {
-                            return s._1._1.toString() + " " + s._1._2.toString();
+                            String val = "";
+                            for (String[] str : s._2) {
+                                val += str[0] + " " +str[1] + " ";
+                            }
+                            return s._1._1.toString() + " " + s._1._2.toString() + val;
                         }
                 )
                 .collect());
