@@ -21,7 +21,10 @@ public class ReportApp {
                 s -> Arrays.stream(s.split("\n")).iterator()
         );
         JavaPairRDD<Integer, String> airportCodeDescription = airportIdLines.mapToPair(
-                s -> new Tuple2<>(s.)
+                s -> {
+                    
+                    return new Tuple2<>();
+                }
         );
 
     }
