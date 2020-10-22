@@ -17,6 +17,7 @@ public class ReportApp {
     public static final String QUOTION = "\"";
     public static final String EMPTY = "";
     public static final int AIRPORTDESCRIPTIONCOLUMN = 1;
+    public static final String AIRPORTDATAFILE = "664600583_T_ONTIME_sample.csv";
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
@@ -34,7 +35,9 @@ public class ReportApp {
                         });
 
         JavaPairRDD<Integer, String[]> airportData = sc
-                .textFile("")
-
+                .textFile(AIRPORTDATAFILE)
+                .flatMap(
+                        s -> Arrays.stream(s.split())
+                )
     }
 }
