@@ -11,8 +11,7 @@ import java.util.Arrays;
 public class ReportApp {
     public static final String APPNAME = "Report airports";
     public static final String AIRPORTIDFILE = "L_AIRPORT_ID.csv";
-    public static final String SEPARATORINTOLINES = "\n";
-    public static final String SEPARATORINTOCELLS = "\",\"";
+    public static final String SEPARATORINTOCELLS = ",";
     public static final int AIRPORTCODECOLUMN = 0;
     public static final String QUOTION = "\"";
     public static final String EMPTY = "";
@@ -31,9 +30,6 @@ public class ReportApp {
 
         JavaPairRDD<Integer, String[]> airportInfo = sc
                 .textFile(AIRPORTIDFILE)
-                .flatMap(
-                        s -> Arrays.stream(s.split(SEPARATORINTOLINES)).iterator()
-                )
                 .mapToPair(
                         s -> {
                             final String[] data = s.split(SEPARATORINTOCELLS);
