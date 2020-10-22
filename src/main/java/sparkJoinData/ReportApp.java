@@ -11,6 +11,6 @@ public class ReportApp {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        JavaRDD<String> 
+        JavaRDD<String> airportInfo = sc.textFile('')
     }
 }
