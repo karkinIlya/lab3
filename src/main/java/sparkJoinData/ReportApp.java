@@ -35,15 +35,14 @@ public class ReportApp {
         final JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = getAirportData(sc);
         final Map<Integer, String> airports = airportInfo.collectAsMap();
         final Broadcast<Map<Integer, String>> airportsBroadcasted = sc.broadcast(airports);
-        final JavaRDD<String> statistic = airportData
+        final JavaRDD<String> reports = airportData
                 .map(
-                        s -> {
-                            String report
-                            airportsBroadcasted.value()
-                        }
+                        s -> s._2[0] + "\t" + s._2[1] + "\t" + s._2[2] + "\tOrigin airport:" + s._1._1 + "\t" +
+                                airportsBroadcasted.value().get(s._1._1) + "\tDestination airport:" + s._1._2 + "\t" +
+                                airportsBroadcasted.value().get(s._1._2)
                 );
 
-        System.out.println(statistic.collect());
+        System.out.println(reports.collect());
     }
 
     private static JavaPairRDD<Tuple2<Integer, Integer>, Double[]> getAirportData(JavaSparkContext sc) {
