@@ -25,6 +25,7 @@ public class ReportApp {
     public static final int CANSELLEDCOLUMNINGROUPBYKEY = 1;
     public static final int DELAYCOLUMNINGROUPBYKEY = 0;
     public static final int AIRPORTIDTITLELEN = 17;
+    public static final int AIRPORTDATATITLELEN = 316;
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
@@ -46,7 +47,7 @@ public class ReportApp {
         JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = sc
                 .textFile(AIRPORTDATAFILE)
                 .flatMap(
-                        s -> Arrays.stream(s.split(SEPARATORINTOLINES)).iterator()
+                        s -> Arrays.stream(s.substring(AIRPORTDATATITLELEN).split(SEPARATORINTOLINES)).iterator()
                 )
                 .mapToPair(
                         s -> {
