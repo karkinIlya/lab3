@@ -2,7 +2,9 @@ package sparkJoinData;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.broadcast.Broadcast;
 import scala.Tuple2;
 
 import java.util.Map;
@@ -29,13 +31,19 @@ public class ReportApp {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        JavaPairRDD<Integer, String> airportInfo = getAirportId(sc);
+        final JavaPairRDD<Integer, String> airportInfo = getAirportId(sc);
+        final JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = getAirportData(sc);
+        final Map<Integer, String> airports = airportInfo.collectAsMap();
+        final Broadcast<Map<Integer, String>> airportsBroadcasted = sc.broadcast(airports);
+        final JavaRDD<String> statistic = airportData
+                .map(
+                        s -> {
+                            String report
+                            airportsBroadcasted.value()
+                        }
+                );
 
-        JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = getAirportData(sc);
-        Map<Integer, String> airports = airportInfo.collectAsMap();
-
-        System.out.println(airportData
-                .collect());
+        System.out.println(statistic.collect());
     }
 
     private static JavaPairRDD<Tuple2<Integer, Integer>, Double[]> getAirportData(JavaSparkContext sc) {
