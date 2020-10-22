@@ -95,10 +95,11 @@ public class ReportApp {
                             int delayCount = 0, cancelledCount = 0, count = 0;
                             for (String[] str : s._2) {
                                 count++;
-                                if(str[CANSELLEDCOLUMNINGROUPBYKEY].equals("1.00")) {
+                                if(!str[CANSELLEDCOLUMNINGROUPBYKEY].equals("0.00")) {
                                     cancelledCount++;
                                 }
-                                else if (!str[DELAYCOLUMNINGROUPBYKEY].equals("0.00")) {
+                                else if (!str[DELAYCOLUMNINGROUPBYKEY].equals("0.00")
+                                        && !str[DELAYCOLUMNINGROUPBYKEY].isEmpty()) {
                                     delayCount++;
                                     double curDelay = Double.parseDouble(str[DELAYCOLUMNINGROUPBYKEY]);
                                     maxDelay = maxDelay >= curDelay ? maxDelay : curDelay;
