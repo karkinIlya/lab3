@@ -45,7 +45,7 @@ public class ReportApp {
         JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = sc
                 .textFile(AIRPORTDATAFILE)
                 .flatMap(
-                        s -> Arrays.stream(s.split(SEPARATORINTOCELLS)).iterator()
+                        s -> Arrays.stream(s.split(SEPARATORINTOLINES)).iterator()
                 )
                 .mapToPair(
                         s -> {
