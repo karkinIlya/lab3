@@ -44,7 +44,7 @@ public class ReportApp {
                 .mapToPair(
                         s -> {
                             String[] data = s.split(SEPARATORINTOCELLS);
-                            String[] value = 
+                            String[] value = 1;
 
                         }
                 );
