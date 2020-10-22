@@ -22,7 +22,7 @@ public class ReportApp {
         );
         JavaPairRDD<Integer, String> airportCodeDescription = airportIdLines.mapToPair(
                 s -> {
-                    
+                    String[] 
                     return new Tuple2<>();
                 }
         );
