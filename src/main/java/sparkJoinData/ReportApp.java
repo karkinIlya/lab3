@@ -34,7 +34,7 @@ public class ReportApp {
         JavaPairRDD<Integer, String[]> airportInfo = sc
                 .textFile(AIRPORTIDFILE)
                 .flatMap(
-                        s -> Arrays.stream(s.substring(AIRPORTIDTITLELEN).split(SEPARATORINTOLINES)).iterator()
+                        s -> Arrays.stream(s.split(SEPARATORINTOLINES)).iterator()
                 )
                 .mapToPair(
                         s -> {
@@ -49,7 +49,7 @@ public class ReportApp {
                 .flatMap(
                         s -> {
                             System.out.println("\n\n\n-------" + s + "---\n");
-                            return Arrays.stream(s.substring(AIRPORTDATATITLELEN).split(SEPARATORINTOLINES)).iterator();
+                            return Arrays.stream(s.split(SEPARATORINTOLINES)).iterator();
                         }
                 )
                 .mapToPair(
