@@ -104,7 +104,7 @@ public class ReportApp {
                                     maxDelay = maxDelay >= curDelay ? maxDelay : curDelay;
                                 }
                             }
-                            return s._1._1.toString() + " " + s._1._2.toString() + val;
+                            return s._1._1.toString() + " " + s._1._2.toString() + count + " " + maxDelay;
                         }
                 )
                 .collect());
