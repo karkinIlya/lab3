@@ -48,7 +48,7 @@ public class ReportApp {
                 .textFile(AIRPORTDATAFILE)
                 .flatMap(
                         s -> {
-                            System.out.println(s);
+                            System.out.println("\n\n\n-------" + s + "---\n");
                             return Arrays.stream(s.substring(AIRPORTDATATITLELEN).split(SEPARATORINTOLINES)).iterator();
                         }
                 )
