@@ -14,21 +14,24 @@ public class ReportApp {
     public static final String SEPARATORINTOLINES = "\n";
     public static final String SEPARATORINTOCELLS = "\",\"";
     public static final int AIRPORTCODECOLUMN = 0;
+    public static final String QUOTION = "\"";
+    public static final String EMPTY = "";
+    public static final int AIRPORTDESCRIPTIONCOLUMN = 1;
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        JavaRDD<String> airportIdFile = sc.textFile(AIRPORTIDFILE);
-        JavaRDD<String> airportIdLines = airportIdFile.flatMap(
-                s -> Arrays.stream(s.split(SEPARATORINTOLINES)).iterator()
-        );
-        JavaPairRDD<Integer, String> airportCodeDescription = airportIdLines.mapToPair(
-                s -> {
-                    String[] data = s.split(SEPARATORINTOCELLS);
-                    return new Tuple2<>(Integer.parseInt(data[AIRPORTCODECOLUMN].));
-                }
-        );
+        JavaPairRDD<Integer, String> airportInfo = sc
+                .textFile(AIRPORTIDFILE)
+                .flatMap(
+                        s -> Arrays.stream(s.split(SEPARATORINTOLINES)).iterator())
+                .mapToPair(
+                        s -> {
+                            String[] data = s.split(SEPARATORINTOCELLS);
+                            return new Tuple2<>(Integer.parseInt(data[AIRPORTCODECOLUMN].replace(QUOTION, EMPTY)),
+                                    data[AIRPORTDESCRIPTIONCOLUMN].replace(QUOTION, EMPTY));
+                        });
 
     }
 }
