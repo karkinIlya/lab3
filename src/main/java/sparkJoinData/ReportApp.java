@@ -54,6 +54,9 @@ public class ReportApp {
                             return new Tuple2<>(key, value);
                         }
                 )
+                .filter(
+                        s -> !s._1.equals()
+                )
                 .groupByKey()
                 .mapToPair(
                         s -> {
