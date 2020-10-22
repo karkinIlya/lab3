@@ -26,18 +26,26 @@ public class ReportApp {
         JavaPairRDD<Integer, String[]> airportInfo = sc
                 .textFile(AIRPORTIDFILE)
                 .flatMap(
-                        s -> Arrays.stream(s.split(SEPARATORINTOLINES)).iterator())
+                        s -> Arrays.stream(s.split(SEPARATORINTOLINES)).iterator()
+                )
                 .mapToPair(
                         s -> {
                             String[] data = s.split(SEPARATORINTOCELLS);
                             return new Tuple2<>(Integer.parseInt(data[AIRPORTCODECOLUMN].replace(QUOTION, EMPTY)),
                                     new String[] {data[AIRPORTDESCRIPTIONCOLUMN].replace(QUOTION, EMPTY)});
-                        });
+                        }
+                );
 
         JavaPairRDD<Integer, String[]> airportData = sc
                 .textFile(AIRPORTDATAFILE)
                 .flatMap(
-                        s -> Arrays.stream(s.split())
+                        s -> Arrays.stream(s.split(SEPARATORINTOCELLS)).iterator()
                 )
+                .mapToPair(
+                        s -> {
+                            String[] data = s.split(SEPARATORINTOCELLS);
+
+                        }
+                );
     }
 }
