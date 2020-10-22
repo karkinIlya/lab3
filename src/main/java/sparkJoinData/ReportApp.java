@@ -31,6 +31,14 @@ public class ReportApp {
 
         JavaPairRDD<Integer, String> airportInfo = getAirportId(sc);
 
+        JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = getAirportData(sc);
+        Map<Integer, String> airports = airportInfo.collectAsMap();
+
+        System.out.println(airportData
+                .collect());
+    }
+
+    private static JavaPairRDD<Tuple2<Integer, Integer>, Double[]> getAirportData(JavaSparkContext sc) {
         JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = sc
                 .textFile(AIRPORTDATAFILE)
                 .filter(
@@ -68,10 +76,7 @@ public class ReportApp {
                             return new Tuple2<>(s._1, value);
                         }
                 );
-        Map<Integer, String> airports = airportInfo.collectAsMap();
-
-        System.out.println(airportData
-                .collect());
+        return airportData;
     }
 
     private static JavaPairRDD<Integer, String> getAirportId(JavaSparkContext sc) {
