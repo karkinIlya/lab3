@@ -26,6 +26,9 @@ public class ReportApp {
     public static final int DELAYCOLUMNINGROUPBYKEY = 0;
     public static final String AIRPORTDATATITLE = "\"YEAR\",\"QUARTER\",\"MONTH\",\"DAY_OF_MONTH\",\"DAY_OF_WEEK\",\"FL_DATE\",\"UNIQUE_CARRIER\",\"AIRLINE_ID\",\"CARRIER\",\"TAIL_NUM\",\"FL_NUM\",\"ORIGIN_AIRPORT_ID\",\"ORIGIN_AIRPORT_SEQ_ID\",\"ORIGIN_CITY_MARKET_ID\",\"DEST_AIRPORT_ID\",\"WHEELS_ON\",\"ARR_TIME\",\"ARR_DELAY\",\"ARR_DELAY_NEW\",\"CANCELLED\",\"CANCELLATION_CODE\",\"AIR_TIME\",\"DISTANCE\",";
     public static final String AIRPORTIDTITLE = "Code,Description";
+    public static final int MAXDELAYCOLUMN = 0;
+    public static final int PARTOFDELAYSCOLUMN = 1;
+    public static final int PARTOFCANSELLEDCOLUMN = 2;
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
@@ -42,9 +45,11 @@ public class ReportApp {
     }
 
     private static String logFormation(Broadcast<Map<Integer, String>> airportsBroadcasted, Tuple2<Tuple2<Integer, Integer>, Double[]> s) {
-        return M s._2[0] + "\t" + s._2[1] + "\t" + s._2[2] + "\tOrigin airport:" + s._1._1 + "\t" +
-                airportsBroadcasted.value().get(s._1._1) + "\tDestination airport:" + s._1._2 + "\t" +
-                airportsBroadcasted.value().get(s._1._2);
+        return "Max delay: " + String.format("%.3f", s._2[MAXDELAYCOLUMN]) + "\t" +
+                "Part of delays: " + String.format("%.3f%", s._2[PARTOFDELAYSCOLUMN] * 100) + "\t" +
+                "Part of canselled: " + String.format("%.3f%", s._2[PARTOFCANSELLEDCOLUMN] * 100) + "\t" +
+                "Origin airport: " + s._1._1 + "\t" + airportsBroadcasted.value().get(s._1._1) + "\t" +
+                "Destination airport: " + s._1._2 + "\t" + airportsBroadcasted.value().get(s._1._2);
     }
 
     private static JavaPairRDD<Tuple2<Integer, Integer>, Double[]> getAirportData(JavaSparkContext sc) {
