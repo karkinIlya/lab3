@@ -18,6 +18,10 @@ public class ReportApp {
     public static final String EMPTY = "";
     public static final int AIRPORTDESCRIPTIONCOLUMN = 1;
     public static final String AIRPORTDATAFILE = "664600583_T_ONTIME_sample.csv";
+    public static final int ORGINAIRPORTIDCOLUMN = 11;
+    public static final int DESTINATIONAIRPORTIDCOLUMN = 14;
+    public static final int NEWDELAYCOLUMN = 18;
+    public static final int CANSELLEDCOLUMN = 19;
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
@@ -36,7 +40,7 @@ public class ReportApp {
                         }
                 );
 
-        JavaPairRDD<Integer, String[]> airportData = sc
+        JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = sc
                 .textFile(AIRPORTDATAFILE)
                 .flatMap(
                         s -> Arrays.stream(s.split(SEPARATORINTOCELLS)).iterator()
@@ -44,9 +48,18 @@ public class ReportApp {
                 .mapToPair(
                         s -> {
                             String[] data = s.split(SEPARATORINTOCELLS);
-                            String[] value = 
-
+                            Tuple2<Integer, Integer> key = new Tuple2<>(Integer.parseInt(data[ORGINAIRPORTIDCOLUMN]),
+                                    Integer.parseInt(data[DESTINATIONAIRPORTIDCOLUMN]));
+                            Double[] value = {Double.parseDouble(data[NEWDELAYCOLUMN]),
+                                    Double.parseDouble(data[CANSELLEDCOLUMN])};
+                            return new Tuple2<>(key, value);
                         }
-                );
+                )
+                .groupByKey()
+                .map(
+                        s -> {
+                            double maxDelay = 0, delaySum = 0;
+                        }
+                )
     }
 }
