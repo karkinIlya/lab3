@@ -77,6 +77,10 @@ public class ReportApp {
                         }
                 );
 
-        System.out.println(airportData.collect());
+        System.out.println(sc
+                .textFile(AIRPORTDATAFILE)
+                .filter(
+                        s -> s.charAt(0) != '\"'
+                ).collect());
     }
 }
