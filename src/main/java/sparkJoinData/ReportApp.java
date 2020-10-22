@@ -33,8 +33,8 @@ public class ReportApp {
                 .textFile(AIRPORTIDFILE)
                 .flatMap(
                         s -> {
-                            Array.
                             String[] lines = s.split(SEPARATORINTOLINES);
+                            lines.
                             return Arrays.stream(lines).iterator();
                         }
                 )
