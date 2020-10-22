@@ -29,6 +29,7 @@ public class ReportApp {
     public static final int MAXDELAYCOLUMN = 0;
     public static final int PARTOFDELAYSCOLUMN = 1;
     public static final int PARTOFCANSELLEDCOLUMN = 2;
+    public static final String OUTPUTPATH = "output";
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
@@ -36,12 +37,13 @@ public class ReportApp {
 
         final JavaPairRDD<Integer, String> airportInfo = getAirportId(sc);
         final JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = getAirportData(sc);
+
         final Map<Integer, String> airports = airportInfo.collectAsMap();
         final Broadcast<Map<Integer, String>> airportsBroadcasted = sc.broadcast(airports);
         final JavaRDD<String> reports = airportData
                 .map(s -> logFormation(airportsBroadcasted, s));
 
-        System.out.println(reports.collect());
+        reports.saveAsTextFile(OUTPUTPATH);
     }
 
     private static String logFormation(Broadcast<Map<Integer, String>> airportsBroadcasted, Tuple2<Tuple2<Integer, Integer>, Double[]> s) {
