@@ -23,7 +23,6 @@ public class ReportApp {
     public static final int CANSELLEDCOLUMN = 19;
     public static final int CANSELLEDCOLUMNINGROUPBYKEY = 1;
     public static final int DELAYCOLUMNINGROUPBYKEY = 0;
-    public static final String AIRPORTDATATITLE = "\"YEAR\",\"QUARTER\",\"MONTH\",\"DAY_OF_MONTH\",\"DAY_OF_WEEK\",\"FL_DATE\",\"UNIQUE_CARRIER\",\"AIRLINE_ID\",\"CARRIER\",\"TAIL_NUM\",\"FL_NUM\",\"ORIGIN_AIRPORT_ID\",\"ORIGIN_AIRPORT_SEQ_ID\",\"ORIGIN_CITY_MARKET_ID\",\"DEST_AIRPORT_ID\",\"WHEELS_ON\",\"ARR_TIME\",\"ARR_DELAY\",\"ARR_DELAY_NEW\",\"CANCELLED\",\"CANCELLATION_CODE\",\"AIR_TIME\",\"DISTANCE\",";
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APPNAME);
@@ -42,7 +41,7 @@ public class ReportApp {
         JavaPairRDD<Tuple2<Integer, Integer>, Double[]> airportData = sc
                 .textFile(AIRPORTDATAFILE)
                 .filter(
-                        s -> !s.equals(AIRPORTDATATITLE)
+                        s -> !s.equals("\"YEAR\",\"QUARTER\",\"MONTH\",\"DAY_OF_MONTH\",\"DAY_OF_WEEK\",\"FL_DATE\",\"UNIQUE_CARRIER\",\"AIRLINE_ID\",\"CARRIER\",\"TAIL_NUM\",\"FL_NUM\",\"ORIGIN_AIRPORT_ID\",\"ORIGIN_AIRPORT_SEQ_ID\",\"ORIGIN_CITY_MARKET_ID\",\"DEST_AIRPORT_ID\",\"WHEELS_ON\",\"ARR_TIME\",\"ARR_DELAY\",\"ARR_DELAY_NEW\",\"CANCELLED\",\"CANCELLATION_CODE\",\"AIR_TIME\",\"DISTANCE\",")
                 )
                 .mapToPair(
                         s -> {
