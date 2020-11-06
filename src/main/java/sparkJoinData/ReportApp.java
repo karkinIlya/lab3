@@ -38,9 +38,13 @@ public class ReportApp {
             "Part of canselled: %.1f%\t" +
             "Origin airport: %d\t%s\t" +
             "Destination airport: %d\t%s";
-    public static final String NO_CANSELLED = "0.00";
-    public static final String NO_DELAY = "0.00";
     public static final int PERSENT_MULTIPLIER = 100;
+    public static final double NO_DELAY = 0.00;
+    public static final double NO_CANSELLED = 0.00;
+    public static final int COUNT_INDEX = 1;
+    public static final int DELAY_COUNT_INDEX = 2;
+    public static final int CANSELLED_COUNT_INDEX = 3;
+    public static final int MAX_DELAY_INDEX = 0;
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APP_NAME);
@@ -81,18 +85,35 @@ public class ReportApp {
                             final Tuple2<Integer, Integer> key =
                                     new Tuple2<>(Integer.parseInt(data[ORGIN_AIRPORT_ID_COLUMN]),
                                             Integer.parseInt(data[DESTINATION_AIRPORT_ID_COLUMN]));
-                            final String[] value = {data[NEW_DELAY_COLUMN], data[CANSELLED_COLUMN]};
+                            final Double[] value = {Double.parseDouble(data[NEW_DELAY_COLUMN]),
+                                    Double.parseDouble(data[CANSELLED_COLUMN])};
                             return new Tuple2<>(key, value);
                         }
                 )
-                .reduceByKey(
+                .mapValues(
                         s -> {
-                            for (String el : s) {
-
+                            double delayMax = 0;
+                            int delayCount = 0;
+                            int canselledCount = 0;
+                            int count = 0;
+                            boolean isDelayColumn = true;
+                            for (Double el : s) {
+                                if (isDelayColumn) {
+                                    count++;
+                                    if (el != NO_DELAY && !el.isNaN()) {
+                                        delayCount++;
+                                        double curDelay = el;
+                                        delayMax = delayMax >= curDelay ? delayMax : curDelay;
+                                    }
+                                } else {
+                                    if (el != NO_CANSELLED) {
+                                        canselledCount++;
+                                    }
+                                }
+                                isDelayColumn = !isDelayColumn;
                             }
-                                
 
-                            return new Tuple2<>(key, value);
+                            return new Double[]{delayMax, (double)count, (double)delayCount, (double)canselledCount};
                         }
                 )
                 .groupByKey()
@@ -100,17 +121,11 @@ public class ReportApp {
                         s -> {
                             double maxDelay = 0;
                             int delayCount = 0, cancelledCount = 0, count = 0;
-                            for (String[] str : s._2) {
-                                count++;
-                                if(!str[CANSELLED_COLUMN_IN_GROUP_BY_KEY].equals(NO_CANSELLED)) {
-                                    cancelledCount++;
-                                }
-                                else if (!str[DELAY_COLUMN_IN_GROUP_BY_KEY].equals(NO_DELAY)
-                                        && !str[DELAY_COLUMN_IN_GROUP_BY_KEY].isEmpty()) {
-                                    delayCount++;
-                                    double curDelay = Double.parseDouble(str[DELAY_COLUMN_IN_GROUP_BY_KEY]);
-                                    maxDelay = maxDelay >= curDelay ? maxDelay : curDelay;
-                                }
+                            for (Double[] values : s._2) {
+                                count += values[COUNT_INDEX].intValue();
+                                delayCount += values[DELAY_COUNT_INDEX].intValue();
+                                cancelledCount += values[CANSELLED_COUNT_INDEX].intValue();
+                                maxDelay = values[MAX_DELAY_INDEX] > maxDelay ? values[MAX_DELAY_INDEX] : maxDelay;
                             }
                             final Double[] value = {maxDelay, (double)delayCount / count,
                                     (double)cancelledCount / count};
@@ -129,8 +144,9 @@ public class ReportApp {
                 .mapToPair(
                         s -> {
                             final String[] data = s.split(SEPARATOR_INTO_CELLS);
-                            return new Tuple2<>(Integer.parseInt(data[AIRPORT_CODE_COLUMN].replace("\"", "")),
-                                    data[AIRPORT_DESCRIPTION_COLUMN].replace("\"", "");
+                            return new Tuple2<>(
+                                    Integer.parseInt(data[AIRPORT_CODE_COLUMN].replace("\"", "")),
+                                    data[AIRPORT_DESCRIPTION_COLUMN].replace("\"", ""));
                         }
                 );
         return airportInfo;
