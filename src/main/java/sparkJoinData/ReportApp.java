@@ -91,9 +91,6 @@ public class ReportApp {
 
                             }
 
-
-
-                            
                             return new Tuple2<>(key, value);
                         }
                 )
