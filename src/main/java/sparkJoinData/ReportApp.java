@@ -90,6 +90,7 @@ public class ReportApp {
                             for (String el : s) {
 
                             }
+                                
 
                             return new Tuple2<>(key, value);
                         }
