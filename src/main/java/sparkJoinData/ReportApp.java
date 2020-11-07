@@ -9,6 +9,7 @@ import org.apache.spark.broadcast.Broadcast;
 import scala.Function;
 import scala.Tuple2;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class ReportApp {
@@ -90,13 +91,18 @@ public class ReportApp {
                             return new Tuple2<>(key, value);
                         }
                 )
-                .mapValues(
-                        s -> {
+                .mapPartitionsToPair(
+                        it -> {
+                            ArrayList<> list = new ArrayList<Tuple2<Tuple2<Integer, Integer>, Double[]>>();
                             double delayMax = 0;
                             int delayCount = 0;
                             int canselledCount = 0;
                             int count = 0;
                             boolean isDelayColumn = true;
+                            while(it.hasNext()) {
+                                Tuple2<Tuple2<Integer, Integer>, Double[]> current = it.next();
+                                delayMax = current._
+                            }
                             for (Double el : s) {
                                 if (isDelayColumn) {
                                     count++;
@@ -112,7 +118,7 @@ public class ReportApp {
                                 }
                                 isDelayColumn = !isDelayColumn;
                             }
-
+                            
                             return new Double[]{delayMax, (double)count, (double)delayCount, (double)canselledCount};
                         }
                 )
@@ -135,6 +141,10 @@ public class ReportApp {
         return airportData;
     }
 
+    private static String removeQuotes(String str) {
+        return str.replace("\"", "");
+    }
+
     private static JavaPairRDD<Integer, String> getAirportId(JavaSparkContext sc) {
         JavaPairRDD<Integer, String> airportInfo = sc
                 .textFile(AIRPORT_ID_FILE)
@@ -145,8 +155,8 @@ public class ReportApp {
                         s -> {
                             final String[] data = s.split(SEPARATOR_INTO_CELLS);
                             return new Tuple2<>(
-                                    Integer.parseInt(data[AIRPORT_CODE_COLUMN].replace("\"", "")),
-                                    data[AIRPORT_DESCRIPTION_COLUMN].replace("\"", ""));
+                                    Integer.parseInt(removeQuotes(data[AIRPORT_CODE_COLUMN])),
+                                    removeQuotes(data[AIRPORT_DESCRIPTION_COLUMN]));
                         }
                 );
         return airportInfo;
