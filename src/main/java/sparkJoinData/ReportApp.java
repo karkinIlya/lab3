@@ -91,6 +91,11 @@ public class ReportApp {
                             return new Tuple2<>(key, value);
                         }
                 )
+                .reduceByKey(
+                        () -> {
+
+                        }
+                )
                 .mapPartitionsToPair(
                         it -> {
                             ArrayList<> list = new ArrayList<Tuple2<Tuple2<Integer, Integer>, Double[]>>();
@@ -118,7 +123,7 @@ public class ReportApp {
                                 }
                                 isDelayColumn = !isDelayColumn;
                             }
-                            
+
                             return new Double[]{delayMax, (double)count, (double)delayCount, (double)canselledCount};
                         }
                 )

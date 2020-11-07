@@ -1,2 +1,4 @@
-package sparkJoinData;public class AirportStatistic {
+package sparkJoinData;
+
+public class AirportStatistic {
 }
