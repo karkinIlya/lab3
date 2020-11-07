@@ -1,15 +1,12 @@
 package sparkJoinData;
 
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.broadcast.Broadcast;
-import scala.Function;
 import scala.Tuple2;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class ReportApp {
@@ -23,8 +20,6 @@ public class ReportApp {
     public static final int DESTINATION_AIRPORT_ID_COLUMN = 14;
     public static final int NEW_DELAY_COLUMN = 18;
     public static final int CANSELLED_COLUMN = 19;
-    public static final int CANSELLED_COLUMN_IN_GROUP_BY_KEY = 1;
-    public static final int DELAY_COLUMN_IN_GROUP_BY_KEY = 0;
     public static final String AIRPORT_DATA_TITLE = "\"YEAR\",\"QUARTER\",\"MONTH\",\"DAY_OF_MONTH\",\"DAY_OF_WEEK\"," +
             "\"FL_DATE\",\"UNIQUE_CARRIER\",\"AIRLINE_ID\",\"CARRIER\",\"TAIL_NUM\",\"FL_NUM\",\"ORIGIN_AIRPORT_ID\"," +
             "\"ORIGIN_AIRPORT_SEQ_ID\",\"ORIGIN_CITY_MARKET_ID\",\"DEST_AIRPORT_ID\",\"WHEELS_ON\",\"ARR_TIME\"," +
@@ -40,12 +35,7 @@ public class ReportApp {
             "Origin airport: %d\t%s\t" +
             "Destination airport: %d\t%s";
     public static final int PERSENT_MULTIPLIER = 100;
-    public static final double NO_DELAY = 0.00;
-    public static final double NO_CANSELLED = 0.00;
-    public static final int COUNT_INDEX = 1;
-    public static final int DELAY_COUNT_INDEX = 2;
-    public static final int CANSELLED_COUNT_INDEX = 3;
-    public static final int MAX_DELAY_INDEX = 0;
+    public static final String NO_CANSELLED = "0.00";
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APP_NAME);
@@ -86,60 +76,20 @@ public class ReportApp {
                             final Tuple2<Integer, Integer> key =
                                     new Tuple2<>(Integer.parseInt(data[ORGIN_AIRPORT_ID_COLUMN]),
                                             Integer.parseInt(data[DESTINATION_AIRPORT_ID_COLUMN]));
-                            final Double[] value = {Double.parseDouble(data[NEW_DELAY_COLUMN]),
-                                    Double.parseDouble(data[CANSELLED_COLUMN])};
+                            final AirportStatistic value = new AirportStatistic(
+                                    Double.parseDouble(data[NEW_DELAY_COLUMN]),
+                                    data[CANSELLED_COLUMN] ==  NO_CANSELLED ? false : true);
                             return new Tuple2<>(key, value);
                         }
                 )
                 .reduceByKey(
-                        () -> {
-
-                        }
+                        (s1, s2) ->  new AirportStatistic(s1, s2)
                 )
-                .mapPartitionsToPair(
-                        it -> {
-                            ArrayList<> list = new ArrayList<Tuple2<Tuple2<Integer, Integer>, Double[]>>();
-                            double delayMax = 0;
-                            int delayCount = 0;
-                            int canselledCount = 0;
-                            int count = 0;
-                            boolean isDelayColumn = true;
-                            while(it.hasNext()) {
-                                Tuple2<Tuple2<Integer, Integer>, Double[]> current = it.next();
-                                delayMax = current._
-                            }
-                            for (Double el : s) {
-                                if (isDelayColumn) {
-                                    count++;
-                                    if (el != NO_DELAY && !el.isNaN()) {
-                                        delayCount++;
-                                        double curDelay = el;
-                                        delayMax = delayMax >= curDelay ? delayMax : curDelay;
-                                    }
-                                } else {
-                                    if (el != NO_CANSELLED) {
-                                        canselledCount++;
-                                    }
-                                }
-                                isDelayColumn = !isDelayColumn;
-                            }
-
-                            return new Double[]{delayMax, (double)count, (double)delayCount, (double)canselledCount};
-                        }
-                )
-                .groupByKey()
                 .mapToPair(
                         s -> {
-                            double maxDelay = 0;
-                            int delayCount = 0, cancelledCount = 0, count = 0;
-                            for (Double[] values : s._2) {
-                                count += values[COUNT_INDEX].intValue();
-                                delayCount += values[DELAY_COUNT_INDEX].intValue();
-                                cancelledCount += values[CANSELLED_COUNT_INDEX].intValue();
-                                maxDelay = values[MAX_DELAY_INDEX] > maxDelay ? values[MAX_DELAY_INDEX] : maxDelay;
-                            }
-                            final Double[] value = {maxDelay, (double)delayCount / count,
-                                    (double)cancelledCount / count};
+                            final Double[] value = {s._2.getMaxDelay(),
+                                    (double)s._2.getCountDelay() / s._2.getCount(),
+                                    (double)s._2.getCountCanselled() / s._2.getCount()};
                             return new Tuple2<>(s._1, value);
                         }
                 );
