@@ -30,12 +30,13 @@ public class ReportApp {
     public static final int PART_OF_CANSELLED_COLUMN = 2;
     public static final String OUTPUT_PATH = "output";
     public static final String LOG_FORMAT_STRING = "Max delay: %.1f\t" +
-            "Part of delays: %.1f%\t" +
-            "Part of canselled: %.1f%\t" +
+            "Part of delays: %.1f%%\t" +
+            "Part of canselled: %.1f%%\t" +
             "Origin airport: %d\t%s\t" +
             "Destination airport: %d\t%s";
     public static final int PERSENT_MULTIPLIER = 100;
     public static final String NO_CANSELLED = "0.00";
+    public static final double NO_DELAY = 0.0;
 
     public static void main(String[] args) throws Exception {
         SparkConf conf = new SparkConf().setAppName(APP_NAME);
@@ -77,8 +78,9 @@ public class ReportApp {
                                     new Tuple2<>(Integer.parseInt(data[ORGIN_AIRPORT_ID_COLUMN]),
                                             Integer.parseInt(data[DESTINATION_AIRPORT_ID_COLUMN]));
                             final AirportStatistic value = new AirportStatistic(
-                                    Double.parseDouble(data[NEW_DELAY_COLUMN]),
-                                    data[CANSELLED_COLUMN] ==  NO_CANSELLED ? false : true);
+                                    data[NEW_DELAY_COLUMN].isEmpty() ?
+                                            NO_DELAY : Double.parseDouble(data[NEW_DELAY_COLUMN]),
+                                    !data[CANSELLED_COLUMN].equals(NO_CANSELLED));
                             return new Tuple2<>(key, value);
                         }
                 )

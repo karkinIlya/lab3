@@ -1,6 +1,8 @@
 package sparkJoinData;
 
-public class AirportStatistic {
+import java.io.Serializable;
+
+public class AirportStatistic implements Serializable {
     private double maxDelay;
     private int count;
     private int countDelay;
